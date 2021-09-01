@@ -1,6 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { getData, validateEmail, validatePassword, token } = require('./request');
+const {
+  getTalkers,
+  validateEmail, 
+  validatePassword,
+  token,
+  valideTalker,
+  valideTalkerName,
+  valideTalkerAge,
+  valideTalkerWatchedAt,
+  valideTalkerRate,
+  valideTalkerToken,
+  createTalker,
+   } = require('./request');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,7 +28,7 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/talker', async (_req, res) => {
-  const talker = await getData();
+  const talker = await getTalkers();
   if (talker) {
     res.status(HTTP_OK_STATUS).json(talker);
   } else {
@@ -26,7 +38,7 @@ app.get('/talker', async (_req, res) => {
 
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
-  const talker = await getData();
+  const talker = await getTalkers();
   const talkerID = talker.find(({ id: idTalker }) => Number(idTalker) === Number(id));
   if (talkerID) {
     res.status(HTTP_OK_STATUS).json(talkerID);
@@ -40,14 +52,28 @@ app.post('/login', (req, res) => {
   const resultEmail = validateEmail(email);
   const resultPass = validatePassword(password);
 
-  const TOKEN = token(email);
   if (!resultEmail && !resultPass) {
+    const TOKEN = token(email);
+    req.headers.authorization = TOKEN;
     res.status(HTTP_OK_STATUS).json({ token: TOKEN });
   } else if (!validateEmail(email)) {
       res.status(ERRO_400).json(resultPass);
     } else {
       res.status(ERRO_400).json(resultEmail);
     }
+});
+
+app.post('/talker',
+valideTalkerName,
+valideTalkerAge,
+valideTalker,
+valideTalkerWatchedAt,
+valideTalkerRate,
+valideTalkerToken,
+ (req, res) => {
+  const talker = req.body;
+  createTalker(talker);
+  res.status(201).json(talker);
 });
 
 app.listen(PORT, () => {
