@@ -13,6 +13,7 @@ const {
   valideTalkerToken,
   createTalker,
   updateTalker,
+  deleteTalkers,
    } = require('./request');
 
 const app = express();
@@ -87,6 +88,12 @@ updateTalker,
   const { age, name, talk } = req.body;
   return res.status(HTTP_OK_STATUS).json({ id: +id, age, name, talk });
 });
+
+app.delete('/talker/:id', 
+valideTalkerToken,
+deleteTalkers,
+(_req, res) => res.status(HTTP_OK_STATUS)
+  .json({ message: 'Pessoa palestrante deletada com sucesso' }));
 
 app.listen(PORT, () => {
   console.log('Online');

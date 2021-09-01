@@ -36,6 +36,14 @@ const createTalker = async (req, _res, next) => {
   next();
 };
 
+const deleteTalkers = async (req, _res, next) => {
+  const { id } = req.params;
+  const talkers = await getTalkers();
+  const talker = talkers.filter((talke) => talke.id !== +id);
+  await fs.writeFile('./talker.json', JSON.stringify(talker));
+  next();
+};
+
 const token = (email) => {
   let toke = '';
   for (let i = 0; i <= 15; i += 1) {
@@ -149,5 +157,5 @@ module.exports = {
   valideTalkerToken,
   createTalker,
   updateTalker,
-  
+  deleteTalkers,
 };
