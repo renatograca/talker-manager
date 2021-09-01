@@ -30,10 +30,9 @@ app.get('/', (_request, response) => {
 app.get('/talker', async (_req, res) => {
   const talker = await getTalkers();
   if (talker) {
-    res.status(HTTP_OK_STATUS).json(talker);
-  } else {
-    res.status(HTTP_OK_STATUS).json([]);
-  }
+    return res.status(HTTP_OK_STATUS).json(talker);
+  } 
+   return res.status(HTTP_OK_STATUS).json([]);
 });
 
 app.get('/talker/:id', async (req, res) => {
@@ -41,10 +40,9 @@ app.get('/talker/:id', async (req, res) => {
   const talker = await getTalkers();
   const talkerID = talker.find(({ id: idTalker }) => Number(idTalker) === Number(id));
   if (talkerID) {
-    res.status(HTTP_OK_STATUS).json(talkerID);
-  } else {
-    res.status(NOT_FOUND).json({ message: 'Pessoa palestrante não encontrada' });
-  }
+    return res.status(HTTP_OK_STATUS).json(talkerID);
+  } 
+    return res.status(NOT_FOUND).json({ message: 'Pessoa palestrante não encontrada' });
 });
 
 app.post('/login', (req, res) => {
@@ -55,26 +53,29 @@ app.post('/login', (req, res) => {
   if (!resultEmail && !resultPass) {
     const TOKEN = token(email);
     req.headers.authorization = TOKEN;
-    res.status(HTTP_OK_STATUS).json({ token: TOKEN });
-  } else if (!validateEmail(email)) {
-      res.status(ERRO_400).json(resultPass);
-    } else {
+  return res.status(HTTP_OK_STATUS).json({ token: TOKEN });
+  } if (!validateEmail(email)) {
+     return res.status(ERRO_400).json(resultPass);
+    } 
       res.status(ERRO_400).json(resultEmail);
-    }
 });
 
 app.post('/talker',
+valideTalkerToken,
 valideTalkerName,
 valideTalkerAge,
 valideTalker,
 valideTalkerWatchedAt,
 valideTalkerRate,
-valideTalkerToken,
- (req, res) => {
-  const talker = req.body;
-  createTalker(talker);
-  res.status(201).json(talker);
+createTalker,
+async (req, res) => {
+  const { name, age, talk } = req.body;
+  res.status(201).json({ id: 5, name, age, talk });
 });
+
+// app.put('/talker:id', (req, res) => {
+  
+// });
 
 app.listen(PORT, () => {
   console.log('Online');
