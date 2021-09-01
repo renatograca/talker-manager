@@ -5,6 +5,23 @@ const getTalkers = async () => {
   return result;
 };
 
+const updateTalker = async (req, _res, next) => {
+  const { id } = req.params;
+  const { age, name, talk } = req.body;
+  const talkers = await getTalkers();
+  const getTalker = talkers.find((talke) => talke.id === +id);
+  const talkerUpgrade = {
+    id: getTalker.id,
+    age,
+    name,
+    talk,
+  };
+  const allTalkers = talkers.filter((talke) => talke.is !== +id);
+  allTalkers.push(talkerUpgrade);
+  await fs.writeFile('./talker.json', JSON.stringify(allTalkers));
+  next();
+};
+
 const createTalker = async (req, _res, next) => {
   const { name, age, talk } = req.body;
   const talkers = await getTalkers();
@@ -15,8 +32,6 @@ const createTalker = async (req, _res, next) => {
     talk,
   };
   talkers.push(talker);
-  // console.log(talkers);
-  // console.log(req);
   await fs.writeFile('./talker.json', JSON.stringify(talkers));
   next();
 };
@@ -91,7 +106,7 @@ const valideTalkerAge = (req, res, next) => {
 
 const valideTalker = (req, res, next) => {
   const { talk } = req.body;
-  if (!talk || (!talk.watchedAt || !talk.rate)) {
+  if (!talk || (!('watchedAt' in talk) || !('rate' in talk))) {
     return res.status(400)
     .json({ message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios' });
   }
@@ -133,4 +148,6 @@ module.exports = {
   valideTalkerRate,
   valideTalkerToken,
   createTalker,
+  updateTalker,
+  
 };

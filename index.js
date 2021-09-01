@@ -12,6 +12,7 @@ const {
   valideTalkerRate,
   valideTalkerToken,
   createTalker,
+  updateTalker,
    } = require('./request');
 
 const app = express();
@@ -70,12 +71,22 @@ valideTalkerRate,
 createTalker,
 async (req, res) => {
   const { name, age, talk } = req.body;
-  res.status(201).json({ id: 5, name, age, talk });
+  return res.status(201).json({ id: 5, name, age, talk });
 });
 
-// app.put('/talker:id', (req, res) => {
-  
-// });
+app.put('/talker/:id',
+valideTalkerToken,
+valideTalkerName,
+valideTalkerAge,
+valideTalker,
+valideTalkerRate,
+valideTalkerWatchedAt,
+updateTalker,
+ (req, res) => {
+  const { id } = req.params;
+  const { age, name, talk } = req.body;
+  return res.status(HTTP_OK_STATUS).json({ id: +id, age, name, talk });
+});
 
 app.listen(PORT, () => {
   console.log('Online');
