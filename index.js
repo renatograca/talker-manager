@@ -29,6 +29,13 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
+app.get('/talker/search', valideTalkerToken, async (req, res) => {
+  const { q } = req.query;
+  const talkers = await getTalkers();
+  const talkersIncludes = talkers.filter(({ name }) => name.includes(q));
+  return res.status(200).json(talkersIncludes);
+});
+
 app.get('/talker', async (_req, res) => {
   const talker = await getTalkers();
   if (talker) {
