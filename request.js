@@ -81,13 +81,6 @@ const validateEmail = (email) => {
   return emailRequired;
 };
 
-// const validateSearch = (req, res, next) => {
-//   const {q} = req.query;
-//   if(!q) {
-//     res.status(401).json()
-//   }
-// }
-
 const valideTalkerToken = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
